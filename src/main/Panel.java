@@ -23,7 +23,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     private int j;
     private boolean isBomb = false;
     private boolean isRevealed = false;
-    private boolean isFlagged = false;
+    private int isFlagged = 0;
     private Text text;
     private Panel[][] grid;
     private int bombCount = 0;
@@ -40,26 +40,63 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        //System.out.println("Pos: " + i + " " + j + " : Bomb: " + isBomb + " : BombCount: " + bombCount + " : Flagged: " + isFlagged);
-
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (isBomb) {
-                if (game.getFirstClick()) {
-                    game.resetBomb(this);
-                    reveal();
+        if (!game.isDone()) {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (!isRevealed) {
+                    if (isBomb) {
+                        if (game.getFirstClick()) {
+                            game.resetBomb(this);
+                            game.playSound(Constants.CLICK_SOUND);
+                            reveal();
+                        } else {
+                            game.setHitBomb(true);
+                            game.playSound(Constants.LONG_BOMB_SOUND);
+                            game.gameOver();
+                        }
+                    } else {
+                        game.playSound(Constants.CLICK_SOUND);
+                        reveal();
+                    }
+                    if (game.getFirstClick()) {
+                        game.setFirstClick(false);
+                    }
                 } else {
-                    game.gameOver();
+                    if(event.getClickCount() == 2) {
+                        game.playSound(Constants.CLICK_SOUND);
+                        revealNeighbours(true);
+                    }
                 }
-            } else {
-                reveal();
-            }
-            if (game.getFirstClick()) {
-                game.setFirstClick(false);
-            }
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            this.isFlagged = !this.isFlagged;
-            update();
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+                if (!this.isRevealed) {
 
+                    this.isFlagged ++;
+                    if (game.getQuestion()) {
+                        switch (this.isFlagged) {
+                            case 1:
+                                game.lowerBombCount(-1);
+                                break;
+                            case 2:
+                                game.lowerBombCount(1);
+                                break;
+                            case 3:
+                                this.isFlagged = 0;
+                                break;
+                        }
+                    } else {
+                        switch (this.isFlagged) {
+                            case 1:
+                                game.lowerBombCount(-1);
+                                break;
+                            case 2:
+                                game.lowerBombCount(1);
+                                this.isFlagged = 0;
+                                break;
+                        }
+                    }
+                    update();
+                }
+
+            }
         }
     }
 
@@ -74,8 +111,28 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
         update();
     }
+
+    public void revealNeighbours(boolean notSafe) {
+        if(!notSafe) {
+            neighbours.stream().filter(neighbour -> (!neighbour.isBomb()) && !neighbour.isRevealed() && !neighbour.isFlagged()).forEach(Panel::reveal);
+        } else {
+
+            int flagCount = 0;
+            for (Panel neighbour: neighbours){
+                if (neighbour.isFlagged()) {
+                    flagCount++;
+                }
+            }
+
+            if(flagCount == this.bombCount) {
+                neighbours.stream().filter(neighbour -> !neighbour.isRevealed() && !neighbour.isFlagged()).forEach(Panel::reveal);
+            }
+        }
+    }
+
     public void revealNeighbours() {
-        neighbours.stream().filter(neighbour -> !neighbour.isBomb() && !neighbour.isRevealed() && !neighbour.isFlagged()).forEach(Panel::reveal);
+
+        revealNeighbours(false);
     }
 
     public void calculateNeighbours() {
@@ -83,9 +140,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         this.bombCount = 0;
 
         if (!this.isBomb) {
-            neighbours.stream().filter(Panel::isBomb).forEach(n -> {
-                bombCount++;
-            });
+            neighbours.stream().filter(Panel::isBomb).forEach(n -> bombCount++);
         }
 
         update();
@@ -115,10 +170,14 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     public void setColour() {
         Color c;
 
-        if (this.isFlagged) {
+        if (this.isFlagged == 1) {
             c = Color.YELLOW;
+        } else if (this.isFlagged == 2) {
+            c = Color.LIGHTGREEN;
         } else if (!this.isRevealed) {
-            c = Color.LIGHTGRAY;
+            //FIXME: Get getBackColor Working
+            //c = game.getBackColor();
+            c=Color.LIGHTGRAY;
         } else if (this.isBomb) {
             c = Color.RED;
         } else {
@@ -148,7 +207,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     }
 
     public boolean isFlagged() {
-        return isFlagged;
+        return isFlagged != 0;
     }
 
     public void setGrid(Panel[][] g) {
@@ -159,22 +218,9 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         this.game = game;
     }
 
-    //    public void test() {
-//        final Animation animation = new Transition() {
-//
-//            {
-//                setCycleDuration(Duration.millis(1000));
-//                setInterpolator(Interpolator.EASE_OUT);
-//            }
-//
-//            @Override
-//            protected void interpolate(double frac) {
-//                Color vColor = new Color(1, 0, 0, 1 - frac);
-//                .setBackgroxund(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
-//            }
-//        };
-//        animation.play();
-//    }
+    public void setIsRevealed(boolean revealed) {isRevealed = revealed;}
+
+    public void setIsFlagged(boolean flagged) {isFlagged = (flagged) ? 1 : 0;}
 
 
 }

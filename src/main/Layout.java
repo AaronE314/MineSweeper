@@ -4,18 +4,19 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.*;
 
 public class Layout {
 
     public static final String[][] MENU_ITEMS = {{"File", "Help"},
-            {"New Game", "Custom Game", "Close"},
+            {"New Game", "Custom Game","Sep","Options","Sep", "Close"},
             {"About", "Help"}};
 
     private BorderPane layout;
     private GridPane grid;
     public Panel[][] gridArray;
-    private MenuBar menu;
+    private MenuHandler menu;
     private int length;
     private int height;
 
@@ -30,13 +31,8 @@ public class Layout {
         gridArray = new Panel[length][height];
         grid = createGrid(length,height);
 
-        //Create Menu
+        //Create MenuHandler
         menu = createMenu(MENU_ITEMS);
-
-
-        grid.setGridLinesVisible(true);
-
-        grid.setAlignment(Pos.CENTER);
 
         layout.setTop(menu);
         layout.setCenter(grid);
@@ -71,34 +67,28 @@ public class Layout {
             }
         }
 
+        gp.setGridLinesVisible(true);
+        gp.setAlignment(Pos.CENTER);
+
 
         return gp;
     }
 
-    public MenuBar createMenu(String[][] menuItems) {
-        MenuBar mb = new MenuBar();
-
-        Menu[] menus = new Menu[menuItems[0].length];
-
-
-        for(int i = 0; i < menuItems[0].length; i++){
-            menus[i] = new Menu(menuItems[0][i]);
-        }
-
-        for(int j = 0; j<menus.length; j++) {
-            for (int i = 0; i < menuItems[j+1].length; i++) {
-                menus[j].getItems().add(new MenuItem(menuItems[j+1][i]));
-            }
-        }
-
-        mb.getMenus().addAll(menus);
+    public MenuHandler createMenu(String[][] menuItems) {
+        MenuHandler mb = new MenuHandler(menuItems);
 
         return mb;
     }
 
+    public void newGrid(int length, int height) {
+
+        gridArray = new Panel[length][height];
+
+        layout.setCenter(createGrid(length,height));
+    }
+
     public BorderPane getLayout() {return layout;}
-    public GridPane getGrid() {return grid;}
     public Panel[][] getGridArray() {return gridArray;}
-    public MenuBar getMenu() {return menu;}
+    public MenuHandler getMenuHandler() {return menu;}
 
 }
