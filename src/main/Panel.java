@@ -1,8 +1,11 @@
 package main;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -16,7 +19,6 @@ import java.util.ArrayList;
 
 public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
-
     private final Color[] TEXT_COLOUR = new Color[]{Color.BLACK, Color.BLUE, Color.rgb(21, 148, 8), Color.RED, Color.rgb(0, 0, 100), Color.rgb(165, 102, 21), Color.rgb(0, 185, 185), Color.BLACK, Color.GRAY,};
 
     private int i;
@@ -29,6 +31,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     private int bombCount = 0;
     private ArrayList<Panel> neighbours = new ArrayList<>();
     private Game game;
+    private ImageView imageView = null;
 
     public Panel(int i, int j) {
         super();
@@ -36,13 +39,19 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         this.j = j;
         this.setOnMouseClicked(this);
         this.setColour();
+
+        //this.setMaxSize(getWidth(),getHeight());
+
     }
 
     @Override
     public void handle(MouseEvent event) {
         if (!game.isDone()) {
             if (event.getButton() == MouseButton.PRIMARY) {
-                if (!isRevealed) {
+                if (!game.isGameInProgress()) {
+                   game.setGameInProgress(true);
+                }
+                if (!isRevealed && !isFlagged()) {
                     if (isBomb) {
                         if (game.getFirstClick()) {
                             game.resetBomb(this);
@@ -103,6 +112,13 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     public void reveal() {
         isRevealed = true;
 
+
+        if (!game.getHitBomb()) {
+            if (this.isBomb) {
+                game.setHitBomb(true);
+                game.gameOver();
+            }
+        }
         game.checkWin();
 
         if (bombCount == 0 && !isBomb) {
@@ -170,18 +186,29 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     public void setColour() {
         Color c;
 
-        if (this.isFlagged == 1) {
-            c = Color.YELLOW;
-        } else if (this.isFlagged == 2) {
-            c = Color.LIGHTGREEN;
-        } else if (!this.isRevealed) {
-            //FIXME: Get getBackColor Working
-            //c = game.getBackColor();
-            c=Color.LIGHTGRAY;
-        } else if (this.isBomb) {
-            c = Color.RED;
+        removeImage(imageView);
+
+        if (!this.isRevealed) {
+            if (this.isFlagged == 1) {
+                c = Color.YELLOW;
+                imageView = addImage(Constants.FLAG_IMG);
+            } else if (this.isFlagged == 2) {
+                c = Color.LIGHTGREEN;
+                imageView = addImage(Constants.QUESTION_IMG);
+            } else {
+                if (game != null) {
+                    c = game.getBackColor();
+                } else {
+                    c=Color.LIGHTGRAY;
+                }
+            }
         } else {
-            c = Color.WHITE;
+            if (this.isBomb) {
+                c = Color.RED;
+                imageView = addImage(Constants.MINE_IMG);
+            } else {
+                c = Color.WHITE;
+            }
         }
 
         this.setBackground(new Background(new BackgroundFill(c, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -221,6 +248,24 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     public void setIsRevealed(boolean revealed) {isRevealed = revealed;}
 
     public void setIsFlagged(boolean flagged) {isFlagged = (flagged) ? 1 : 0;}
+
+    public ImageView addImage(final String url) {
+        Image img = new Image(url);
+        ImageView imgView = new ImageView(img);
+        //imgView.fitWidthProperty().bind(this.widthProperty().divide(2));
+        //imgView.fitHeightProperty().bind(this.heightProperty().divide(2));
+        imgView.setFitWidth(getWidth());
+        imgView.setFitHeight(getHeight());
+        this.getChildren().add(imgView);
+
+        return imgView;
+    }
+
+    public void removeImage(ImageView iv) {
+        this.getChildren().remove(iv);
+        imageView = null;
+    }
+
 
 
 }

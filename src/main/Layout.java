@@ -1,6 +1,7 @@
 package main;
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -36,6 +37,7 @@ public class Layout {
 
         layout.setTop(menu);
         layout.setCenter(grid);
+
 
     }
 

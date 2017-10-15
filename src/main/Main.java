@@ -27,11 +27,17 @@ public class Main extends Application{
 
         primaryStage.setTitle("MineSweeper");
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(game.getLayout().getLayout(), 800, 800));
+        primaryStage.setScene(new Scene(game.getLayout().getLayout(), 800, 832));
         primaryStage.show();
     }
 
     public static void close() {
         window.close();
     }
+
+    public static void changeSize(int width, int height) {
+        window.setHeight(height);
+        window.setWidth(width);
+    }
+
 }

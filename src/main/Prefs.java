@@ -19,7 +19,7 @@ public class Prefs {
             output = new FileOutputStream("src/main/assets/prefs.properties");
 
             for (int i = 0; i < FIELDS.length; i++) {
-                prop.setProperty(FIELDS[i],settings[i]);
+                prop.setProperty(FIELDS[i], settings[i]);
             }
 
             prop.store(output, null);

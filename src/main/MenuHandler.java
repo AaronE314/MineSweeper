@@ -47,12 +47,10 @@ public class MenuHandler extends VBox implements EventHandler<ActionEvent>{
 
         Label bombText = new Label("Bombs Remaining: ");
         bombsLeft = new Label("0");
-        Label timeElapsed = new Label("Time: ");
-        time = new Label("0:00");
 
         menu.getMenus().addAll(menus);
 
-        hBox.getChildren().addAll(bombText, bombsLeft, timeElapsed, time);
+        hBox.getChildren().addAll(bombText, bombsLeft);
 
         this.getChildren().addAll(menu, hBox);
     }

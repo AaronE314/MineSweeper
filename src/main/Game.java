@@ -1,11 +1,14 @@
 package main;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Game {
@@ -16,6 +19,8 @@ public class Game {
 
     private boolean firstClick = true;
     private Panel[][] grid;
+
+    private boolean gameInProgress = false;
 
     private Random rand = new Random();
 
@@ -34,6 +39,7 @@ public class Game {
 
         newGame(diff);
 
+
     }
 
 
@@ -46,6 +52,8 @@ public class Game {
 
     public void newGame(int[] diff) {
 
+        Main.changeSize(diff[0]*50,diff[1]*50);
+
         getPrefs();
 
         playSound(Constants.NEW_GAME_SOUND);
@@ -55,6 +63,7 @@ public class Game {
         done = false;
         firstClick = true;
         hitBomb = false;
+        gameInProgress = false;
 
         addBombs(diff);
 
@@ -77,6 +86,8 @@ public class Game {
     public void newGame() {
         Panel[][] board = new Panel[diff[0]][diff[1]];
 
+        playSound(Constants.NEW_GAME_SOUND);
+
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 board[i][j] = grid[i][j];
@@ -87,6 +98,7 @@ public class Game {
 
         done = false;
         hitBomb = false;
+        gameInProgress = false;
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -117,6 +129,7 @@ public class Game {
     public void gameOver() {
 
         done = true;
+        gameInProgress = false;
 
         revealAll();
 
@@ -126,7 +139,9 @@ public class Game {
     public void revealAll() {
         for (Panel[] panels : grid) {
             for (Panel panel : panels) {
-                panel.reveal();
+                if (panel.isBomb()) {
+                    panel.reveal();
+                }
             }
         }
     }
@@ -183,6 +198,7 @@ public class Game {
     public void win() {
 
         done = true;
+        gameInProgress = false;
 
         playSound(Constants.WIN_SOUND);
 
@@ -199,6 +215,10 @@ public class Game {
 
     public void setHitBomb(boolean value) {
         hitBomb = value;
+    }
+
+    public boolean getHitBomb() {
+        return hitBomb;
     }
 
     public boolean isDone() {
@@ -219,6 +239,14 @@ public class Game {
         return backColor;
     }
 
+    public boolean isGameInProgress() {
+        return gameInProgress;
+    }
+
+    public void setGameInProgress(boolean game) {
+        gameInProgress = game;
+    }
+
     public void getPrefs() {
 
         String[] pref = Prefs.readAll();
@@ -227,6 +255,15 @@ public class Game {
         this.question = Boolean.valueOf(pref[1]);
         this.sound = Boolean.valueOf(pref[2]);
         this.diff = stringToIntArray(pref[3]);
+
+
+        if (grid != null) {
+            for (Panel[] panels : grid) {
+                for (Panel panel : panels) {
+                    panel.update();
+                }
+            }
+        }
 
     }
 
