@@ -14,7 +14,7 @@ public class MenuHandler extends VBox implements EventHandler<ActionEvent>{
 
     private MenuBar menu;
 
-    private Label bombsLeft, time;
+    private Label bombsLeft;
 
     public MenuHandler(String[][] menuItems) {
         super();
@@ -87,10 +87,7 @@ public class MenuHandler extends VBox implements EventHandler<ActionEvent>{
         this.game = game;
     }
 
-
     public Label getBombsLeft() {return bombsLeft;}
-
-    public Label getTime() {return time;}
 }
 
 

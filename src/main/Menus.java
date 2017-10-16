@@ -1,7 +1,5 @@
 package main;
 
-
-import com.sun.deploy.util.ArrayUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,8 +15,8 @@ import java.util.Arrays;
 public abstract class Menus {
 
     public static void newGame(Game game, boolean same) {
-        if(!same) {
-            if (game.isGameInProgress()){
+        if (!same) {
+            if (game.isGameInProgress()) {
                 newGameConfirm(game);
             } else {
                 game.newGame(Game.stringToIntArray(Prefs.read("diff")), true);
@@ -41,8 +39,8 @@ public abstract class Menus {
 
         HBox deffs = new HBox();
 
-        Scene scene = new Scene(vBox, 400,200);
-        Stage stage = setupWindow("Options",scene);
+        Scene scene = new Scene(vBox, 400, 200);
+        Stage stage = setupWindow("Options", scene);
 
         ToggleGroup group = new ToggleGroup();
 
@@ -66,26 +64,26 @@ public abstract class Menus {
 
         length.setText("9");
         length.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(Integer.parseInt(length.getText()) < 9) {
+            if (Integer.parseInt(length.getText()) < 9) {
                 length.setText("9");
-            } else if (Integer.parseInt(length.getText()) > 24 ) {
+            } else if (Integer.parseInt(length.getText()) > 24) {
                 length.setText("24");
             }
-            updateCustom(mines,width,length);
+            updateCustom(mines, width, length);
         });
         length.setEditable(custom.isSelected());
         width.setText("9");
         width.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(Integer.parseInt(width.getText()) < 9) {
+            if (Integer.parseInt(width.getText()) < 9) {
                 width.setText("9");
-            } else if (Integer.parseInt(width.getText()) > 30 ) {
+            } else if (Integer.parseInt(width.getText()) > 30) {
                 width.setText("30");
             }
-            updateCustom(mines,width,length);
+            updateCustom(mines, width, length);
         });
         width.setEditable(custom.isSelected());
         mines.setText("10");
-        mines.focusedProperty().addListener((observable, oldValue, newValue) -> updateCustom(mines,width,length));
+        mines.focusedProperty().addListener((observable, oldValue, newValue) -> updateCustom(mines, width, length));
         mines.setEditable(custom.isSelected());
         custom.selectedProperty().addListener((observable, oldValue, newValue) -> {
             length.setEditable(custom.isSelected());
@@ -99,7 +97,7 @@ public abstract class Menus {
         Label minesLabel = new Label("Mines (10-667): ");
 
 
-        if(Arrays.equals(game.getDiff(), Constants.EASY)) {
+        if (Arrays.equals(game.getDiff(), Constants.EASY)) {
             easy.setSelected(true);
         } else if (Arrays.equals(game.getDiff(), Constants.MEDIUM)) {
             medium.setSelected(true);
@@ -109,11 +107,10 @@ public abstract class Menus {
             custom.setSelected(true);
         }
 
-
         Button close = new Button("Cancel");
-        close.setOnAction(e-> stage.close());
+        close.setOnAction(e -> stage.close());
         Button start = new Button("Start");
-        start.setOnAction(e-> {
+        start.setOnAction(e -> {
             String diff = group.getSelectedToggle().getUserData().toString();
             if (diff.equals("custom")) {
                 diff = width.getText() + "," + length.getText() + "," + mines.getText();
@@ -123,7 +120,7 @@ public abstract class Menus {
 
             prefs[3] = diff;
 
-            for(int i = 0; i < prefs.length / 2; i++) {
+            for (int i = 0; i < prefs.length / 2; i++) {
                 String temp = prefs[i];
                 prefs[i] = prefs[prefs.length - i - 1];
                 prefs[prefs.length - i - 1] = temp;
@@ -142,19 +139,19 @@ public abstract class Menus {
         HBox widthBox = new HBox();
         HBox mineBox = new HBox();
 
-        heightBox.getChildren().addAll(heightLabel,length);
+        heightBox.getChildren().addAll(heightLabel, length);
         widthBox.getChildren().addAll(widthLabel, width);
-        mineBox.getChildren().addAll(minesLabel,mines);
+        mineBox.getChildren().addAll(minesLabel, mines);
 
 
-        buttons.getChildren().addAll(start,close);
+        buttons.getChildren().addAll(start, close);
         buttons.setAlignment(Pos.CENTER);
 
-        deffBox.getChildren().addAll(easy,medium,hard);
-        customBox.getChildren().addAll(custom,heightBox,widthBox,mineBox);
-        deffs.getChildren().addAll(deffBox,customBox);
+        deffBox.getChildren().addAll(easy, medium, hard);
+        customBox.getChildren().addAll(custom, heightBox, widthBox, mineBox);
+        deffs.getChildren().addAll(deffBox, customBox);
 
-        vBox.getChildren().addAll(deffs,buttons);
+        vBox.getChildren().addAll(deffs, buttons);
 
         stage.showAndWait();
 
@@ -168,7 +165,7 @@ public abstract class Menus {
         Label label = new Label();
         label.setText("Better Luck Next Time!");
 
-        Scene scene = new Scene(vBox, 400,100);
+        Scene scene = new Scene(vBox, 400, 100);
 
         Stage window = setupWindow("Game Over", scene);
 
@@ -178,14 +175,14 @@ public abstract class Menus {
             window.close();
         });
         Button sameGame = new Button("Play Same Board");
-        sameGame.setOnAction(e-> {
+        sameGame.setOnAction(e -> {
             newGame(game, true);
             window.close();
         });
         Button viewBoard = new Button("View Board");
-        viewBoard.setOnAction(e->window.close());
+        viewBoard.setOnAction(e -> window.close());
         Button close = new Button("Close");
-        close.setOnAction(e->{
+        close.setOnAction(e -> {
             window.close();
             Main.close();
         });
@@ -193,7 +190,7 @@ public abstract class Menus {
         vBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
 
-        hBox.getChildren().addAll(newGame,sameGame,viewBoard,close);
+        hBox.getChildren().addAll(newGame, sameGame, viewBoard, close);
 
         vBox.getChildren().addAll(label, hBox);
 
@@ -208,7 +205,7 @@ public abstract class Menus {
         Label label = new Label();
         label.setText("Congratulations!");
 
-        Scene scene = new Scene(vBox, 400,100);
+        Scene scene = new Scene(vBox, 400, 100);
 
         Stage window = setupWindow("Game Won!", scene);
 
@@ -218,9 +215,9 @@ public abstract class Menus {
             window.close();
         });
         Button viewBoard = new Button("View Board");
-        viewBoard.setOnAction(e->window.close());
+        viewBoard.setOnAction(e -> window.close());
         Button close = new Button("Close");
-        close.setOnAction(e->{
+        close.setOnAction(e -> {
             window.close();
             Main.close();
         });
@@ -228,7 +225,7 @@ public abstract class Menus {
         vBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
 
-        hBox.getChildren().addAll(newGame,viewBoard,close);
+        hBox.getChildren().addAll(newGame, viewBoard, close);
 
         vBox.getChildren().addAll(label, hBox);
 
@@ -238,9 +235,9 @@ public abstract class Menus {
     public static void help() {
         HBox hBox = new HBox();
 
-        Scene scene = new Scene(hBox, 200,200);
+        Scene scene = new Scene(hBox, 200, 200);
 
-        Stage stage = setupWindow("Help",scene);
+        Stage stage = setupWindow("Help", scene);
 
         Text text = new Text();
 
@@ -261,8 +258,8 @@ public abstract class Menus {
         HBox deffs = new HBox();
 
         String[] settings = new String[4];
-        Scene scene = new Scene(vBox, 400,200);
-        Stage stage = setupWindow("Options",scene);
+        Scene scene = new Scene(vBox, 400, 200);
+        Stage stage = setupWindow("Options", scene);
 
         ToggleGroup group = new ToggleGroup();
 
@@ -285,26 +282,26 @@ public abstract class Menus {
         DigitField mines = new DigitField();
         length.setText("9");
         length.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(Integer.parseInt(length.getText()) < 9) {
+            if (Integer.parseInt(length.getText()) < 9) {
                 length.setText("9");
-            } else if (Integer.parseInt(length.getText()) > 24 ) {
+            } else if (Integer.parseInt(length.getText()) > 24) {
                 length.setText("24");
             }
-            updateCustom(mines,width,length);
+            updateCustom(mines, width, length);
         });
         length.setEditable(custom.isSelected());
         width.setText("9");
         width.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(Integer.parseInt(width.getText()) < 9) {
+            if (Integer.parseInt(width.getText()) < 9) {
                 width.setText("9");
-            } else if (Integer.parseInt(width.getText()) > 30 ) {
+            } else if (Integer.parseInt(width.getText()) > 30) {
                 width.setText("30");
             }
-            updateCustom(mines,width,length);
+            updateCustom(mines, width, length);
         });
         width.setEditable(custom.isSelected());
         mines.setText("10");
-        mines.focusedProperty().addListener((observable, oldValue, newValue) -> updateCustom(mines,width,length));
+        mines.focusedProperty().addListener((observable, oldValue, newValue) -> updateCustom(mines, width, length));
         mines.setEditable(custom.isSelected());
         custom.selectedProperty().addListener((observable, oldValue, newValue) -> {
             length.setEditable(custom.isSelected());
@@ -318,7 +315,7 @@ public abstract class Menus {
         Label minesLabel = new Label("Mines (10-667): ");
 
 
-        if(Arrays.equals(game.getDiff(), Constants.EASY)) {
+        if (Arrays.equals(game.getDiff(), Constants.EASY)) {
             easy.setSelected(true);
         } else if (Arrays.equals(game.getDiff(), Constants.MEDIUM)) {
             medium.setSelected(true);
@@ -342,9 +339,9 @@ public abstract class Menus {
 
 
         Button close = new Button("Close");
-        close.setOnAction(e-> stage.close());
+        close.setOnAction(e -> stage.close());
         Button save = new Button("Save");
-        save.setOnAction(e-> {
+        save.setOnAction(e -> {
             String diff = group.getSelectedToggle().getUserData().toString();
             if (diff.equals("custom")) {
                 diff = width.getText() + "," + length.getText() + "," + mines.getText();
@@ -367,7 +364,7 @@ public abstract class Menus {
             stage.close();
         });
         Button reset = new Button("Restore defaults");
-        reset.setOnAction(e->{
+        reset.setOnAction(e -> {
             easy.setSelected(true);
             sound.setSelected(true);
             question.setSelected(true);
@@ -382,30 +379,28 @@ public abstract class Menus {
         HBox widthBox = new HBox();
         HBox mineBox = new HBox();
 
-        heightBox.getChildren().addAll(heightLabel,length);
+        heightBox.getChildren().addAll(heightLabel, length);
         widthBox.getChildren().addAll(widthLabel, width);
-        mineBox.getChildren().addAll(minesLabel,mines);
+        mineBox.getChildren().addAll(minesLabel, mines);
 
 
-        buttons.getChildren().addAll(save,close, reset);
+        buttons.getChildren().addAll(save, close, reset);
         buttons.setAlignment(Pos.CENTER);
 
-        deffBox.getChildren().addAll(easy,medium,hard);
-        customBox.getChildren().addAll(custom,heightBox,widthBox,mineBox);
-        deffs.getChildren().addAll(deffBox,customBox);
+        deffBox.getChildren().addAll(easy, medium, hard);
+        customBox.getChildren().addAll(custom, heightBox, widthBox, mineBox);
+        deffs.getChildren().addAll(deffBox, customBox);
 
-        vBox.getChildren().addAll(deffs,checks,buttons);
-
-
+        vBox.getChildren().addAll(deffs, checks, buttons);
 
         stage.showAndWait();
     }
 
     private static void updateCustom(DigitField mines, DigitField width, DigitField length) {
         int val = Integer.parseInt(mines.getText());
-        int maxVal = (Integer.parseInt(width.getText())-1) * (Integer.parseInt(length.getText())-1);
+        int maxVal = (Integer.parseInt(width.getText()) - 1) * (Integer.parseInt(length.getText()) - 1);
         System.out.println(maxVal);
-        if(val < 10) {
+        if (val < 10) {
             mines.setText("9");
         } else if (val > maxVal) {
             mines.setText(Integer.toString(maxVal));
@@ -416,13 +411,15 @@ public abstract class Menus {
 
         HBox hBox = new HBox();
 
-        Scene scene = new Scene(hBox, 200,200);
+        Scene scene = new Scene(hBox, 200, 200);
 
-        Stage stage = setupWindow("about",scene);
+        Stage stage = setupWindow("about", scene);
 
         Text text = new Text();
 
         text.setText("Add about stuff here");
+
+        hBox.setAlignment(Pos.CENTER);
 
         hBox.getChildren().addAll(text);
 
@@ -433,14 +430,14 @@ public abstract class Menus {
     public static void confirm(Game game) {
         VBox vBox = new VBox();
 
-        Scene scene = new Scene(vBox,200,100);
+        Scene scene = new Scene(vBox, 200, 100);
 
         Stage window = setupWindow("Confirm", scene);
 
         Label text = new Label("These settings won't apply to the game in progress. What do you want to do?");
 
         Button restart = new Button("Quit and start a new game with the new settings");
-        restart.setOnAction(e->{
+        restart.setOnAction(e -> {
             game.setGameInProgress(false);
             newGame(game);
             window.close();
@@ -448,7 +445,9 @@ public abstract class Menus {
         Button finish = new Button("Finish the game");
         finish.setOnAction(e -> window.close());
 
-        vBox.getChildren().addAll(text,restart,finish);
+        vBox.setAlignment(Pos.CENTER);
+
+        vBox.getChildren().addAll(text, restart, finish);
 
 
         window.showAndWait();
@@ -457,7 +456,7 @@ public abstract class Menus {
     public static void newGameConfirm(Game game) {
         VBox vBox = new VBox();
 
-        Scene scene = new Scene(vBox,200,100);
+        Scene scene = new Scene(vBox, 200, 100);
 
         Stage window = setupWindow("New Game", scene);
 
@@ -471,7 +470,7 @@ public abstract class Menus {
             window.close();
         });
         Button restart = new Button("Restart this game");
-        restart.setOnAction(e->{
+        restart.setOnAction(e -> {
             game.setGameInProgress(false);
             newGame(game, true);
             window.close();
@@ -479,8 +478,9 @@ public abstract class Menus {
         Button finish = new Button("Keep Playing");
         finish.setOnAction(e -> window.close());
 
+        vBox.setAlignment(Pos.CENTER);
 
-        vBox.getChildren().addAll(text,newGame,restart,finish);
+        vBox.getChildren().addAll(text, newGame, restart, finish);
 
 
         window.showAndWait();
@@ -490,6 +490,9 @@ public abstract class Menus {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(title);
+
+        //scene.getStylesheets().clear();
+        scene.getStylesheets().add("main/assets/mainStyle.css");
 
         window.setScene(scene);
 

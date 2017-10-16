@@ -1,7 +1,6 @@
 package main;
 
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -19,14 +18,13 @@ import java.util.ArrayList;
 
 public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
-    private final Color[] TEXT_COLOUR = new Color[]{Color.BLACK, Color.BLUE, Color.rgb(21, 148, 8), Color.RED, Color.rgb(0, 0, 100), Color.rgb(165, 102, 21), Color.rgb(0, 185, 185), Color.BLACK, Color.GRAY,};
+    private final Color[] TEXT_COLOUR = {Color.BLACK, Color.BLUE, Color.rgb(21, 148, 8), Color.RED, Color.rgb(0, 0, 100), Color.rgb(165, 102, 21), Color.rgb(0, 185, 185), Color.BLACK, Color.GRAY,};
 
     private int i;
     private int j;
     private boolean isBomb = false;
     private boolean isRevealed = false;
     private int isFlagged = 0;
-    private Text text;
     private Panel[][] grid;
     private int bombCount = 0;
     private ArrayList<Panel> neighbours = new ArrayList<>();
@@ -186,15 +184,15 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     public void setColour() {
         Color c;
 
-        removeImage(imageView);
+        //removeImage(imageView);
 
         if (!this.isRevealed) {
             if (this.isFlagged == 1) {
                 c = Color.YELLOW;
-                imageView = addImage(Constants.FLAG_IMG);
+                //imageView = addImage(Constants.FLAG_IMG);
             } else if (this.isFlagged == 2) {
                 c = Color.LIGHTGREEN;
-                imageView = addImage(Constants.QUESTION_IMG);
+                //imageView = addImage(Constants.QUESTION_IMG);
             } else {
                 if (game != null) {
                     c = game.getBackColor();
@@ -205,7 +203,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         } else {
             if (this.isBomb) {
                 c = Color.RED;
-                imageView = addImage(Constants.MINE_IMG);
+                //imageView = addImage(Constants.MINE_IMG);
             } else {
                 c = Color.WHITE;
             }
@@ -215,8 +213,8 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     }
 
     public void setText() {
-        this.text = new Text((bombCount > 0 && this.isRevealed) ? String.valueOf(this.bombCount) : "");
-        this.text.setFill(TEXT_COLOUR[bombCount]);
+        Text text = new Text((bombCount > 0 && this.isRevealed) ? String.valueOf(this.bombCount) : "");
+        text.setFill(TEXT_COLOUR[bombCount]);
         this.getChildren().add(text);
         this.setAlignment(Pos.CENTER);
     }
