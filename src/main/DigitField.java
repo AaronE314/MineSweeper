@@ -3,6 +3,9 @@ package main;
 
 import javafx.scene.control.TextField;
 
+/**
+ * This class is used for a textField that only accepts Integers as input
+ */
 public class DigitField extends TextField {
 
     @Override

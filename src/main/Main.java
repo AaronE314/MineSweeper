@@ -4,8 +4,14 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Main Class
+ */
 public class Main extends Application{
 
+    /**
+     * static attributes
+     */
     public static Game game;
     public static Stage window;
 
@@ -31,13 +37,23 @@ public class Main extends Application{
         primaryStage.show();
     }
 
+    /**
+     * for handling closing the window
+     */
     public static void close() {
         window.close();
     }
 
+    /**
+     * used to change the size of the current window.
+     * @param width
+     *      the new width of the window
+     * @param height
+     *      the new height of the window
+     */
     public static void changeSize(int width, int height) {
-        window.setHeight(height);
-        window.setWidth(width);
+        window.setHeight(height * 40);
+        window.setWidth(width * 40);
     }
 
 }

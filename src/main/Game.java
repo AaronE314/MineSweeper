@@ -8,7 +8,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 public class Game {
@@ -52,7 +51,7 @@ public class Game {
 
     public void newGame(int[] diff) {
 
-        Main.changeSize(diff[0]*50,diff[1]*50);
+        Main.changeSize(diff[0],diff[1]);
 
         getPrefs();
 

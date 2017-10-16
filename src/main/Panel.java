@@ -16,10 +16,16 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
+/**
+ * a Panel for each tile in the grid
+ *
+ */
 public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
-    private final Color[] TEXT_COLOUR = {Color.BLACK, Color.BLUE, Color.rgb(21, 148, 8), Color.RED, Color.rgb(0, 0, 100), Color.rgb(165, 102, 21), Color.rgb(0, 185, 185), Color.BLACK, Color.GRAY,};
 
+    /**
+     * class attributes
+     */
     private int i;
     private int j;
     private boolean isBomb = false;
@@ -29,8 +35,14 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
     private int bombCount = 0;
     private ArrayList<Panel> neighbours = new ArrayList<>();
     private Game game;
-    private ImageView imageView = null;
 
+    /**
+     * constructor
+     * @param i
+     *      row
+     * @param j
+     *      col
+     */
     public Panel(int i, int j) {
         super();
         this.i = i;
@@ -42,9 +54,17 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
 
     }
 
+    /**
+     *Handles click event on the panel, handles left click, right click, and double left click
+     *
+     * @param event
+     *      event that calls the function
+     */
     @Override
     public void handle(MouseEvent event) {
         if (!game.isDone()) {
+
+            //Left click handler
             if (event.getButton() == MouseButton.PRIMARY) {
                 if (!game.isGameInProgress()) {
                    game.setGameInProgress(true);
@@ -68,11 +88,14 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
                         game.setFirstClick(false);
                     }
                 } else {
+                    //Double click handler
                     if(event.getClickCount() == 2) {
                         game.playSound(Constants.CLICK_SOUND);
                         revealNeighbours(true);
                     }
                 }
+
+            //Right Click handler
             } else if (event.getButton() == MouseButton.SECONDARY) {
                 if (!this.isRevealed) {
 
@@ -107,6 +130,10 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         }
     }
 
+    /**
+     * reveals the current tile, if the tile is blank will call revealNeighbours.
+     * will end the game if the tile is a bomb
+     */
     public void reveal() {
         isRevealed = true;
 
@@ -126,6 +153,12 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         update();
     }
 
+    /**
+     * will call the reveal function on the neighbours of the current tile. Avoiding a tile if it is a bomb, revealed, or flagged.
+     *
+     * @param notSafe
+     *      if true the function will call reveal on bombs as well.
+     */
     public void revealNeighbours(boolean notSafe) {
         if(!notSafe) {
             neighbours.stream().filter(neighbour -> (!neighbour.isBomb()) && !neighbour.isRevealed() && !neighbour.isFlagged()).forEach(Panel::reveal);
@@ -144,11 +177,18 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         }
     }
 
+
+    /**
+     * will call the reveal function on the neighbours of the current tile. Avoiding a tile if it is a bomb, revealed, or flagged.
+     */
     public void revealNeighbours() {
 
         revealNeighbours(false);
     }
 
+    /**
+     * will calculate the bomb count by checking the neighbours of the panel
+     */
     public void calculateNeighbours() {
 
         this.bombCount = 0;
@@ -160,6 +200,9 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         update();
     }
 
+    /**
+     * goes through the main grid and adds all of the neighbours that exist around the panel to the neighbours attribute
+     */
     public void addNeighbours() {
         int startPosX = (this.i - 1 < 0) ? this.i : this.i - 1;
         int startPosY = (this.j - 1 < 0) ? this.j : this.j - 1;
@@ -175,12 +218,18 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         }
     }
 
+    /**
+     * updates the panel
+     */
     public void update() {
         setColour();
         setText();
     }
 
 
+    /**
+     * sets the colour of the panel based on its state
+     */
     public void setColour() {
         Color c;
 
@@ -212,41 +261,92 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         this.setBackground(new Background(new BackgroundFill(c, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
+    /**
+     * sets the text of the tile to the bomb count of the panel, or to nothing if the panel is a bomb or is not revealed.
+     */
     public void setText() {
         Text text = new Text((bombCount > 0 && this.isRevealed) ? String.valueOf(this.bombCount) : "");
-        text.setFill(TEXT_COLOUR[bombCount]);
+        text.setFill(Constants.TEXT_COLOUR[bombCount]);
         this.getChildren().add(text);
         this.setAlignment(Pos.CENTER);
     }
 
+    /**
+     * determines whether or not the tile is a bomb
+     * @return
+     *      true if the tile is a bomb, false otherwise
+     */
     public boolean isBomb() {
         return isBomb;
     }
 
+    /**
+     * sets the tile to a bomb or not
+     * @param bomb
+     *      true to set to a bomb, false otherwise.
+     */
     public void setBomb(boolean bomb) {
         isBomb = bomb;
     }
 
+    /**
+     * determines whether the panel is revealed
+     * @return
+     *      true if revealed, false otherwise.
+     */
     public boolean isRevealed() {
         return isRevealed;
     }
 
+    /**
+     * determines whether the panel is flagged
+     * @return
+     *      true if flagged, false otherwise
+     */
     public boolean isFlagged() {
         return isFlagged != 0;
     }
 
+    /**
+     * sets the grid attribute to a given grid
+     * @param g
+     *      a 2D array of panels that is the grid
+     */
     public void setGrid(Panel[][] g) {
         this.grid = g;
     }
 
+    /**
+     * sets the game attribute to the given game object
+     * @param game
+     *      a game object
+     */
     public void setGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * sets the panel to be revealed or not
+     * @param revealed
+     *      true to reveal, false otherwise
+     */
     public void setIsRevealed(boolean revealed) {isRevealed = revealed;}
 
+    /**
+     * sets the panel to be flagged or not
+     * @param flagged
+     *      true to set flagged, false otherwise
+     */
     public void setIsFlagged(boolean flagged) {isFlagged = (flagged) ? 1 : 0;}
 
+    /**
+     * adds an image to the panel by loading the image from a given url
+     *
+     * @param url
+     *      the url path to the file
+     * @return
+     *      the imgView with the image added to it
+     */
     public ImageView addImage(final String url) {
         Image img = new Image(url);
         ImageView imgView = new ImageView(img);
@@ -259,9 +359,14 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
         return imgView;
     }
 
+    /**
+     * removes the Image from the panel
+     *
+     * @param iv
+     *      the imageView to be removed
+     */
     public void removeImage(ImageView iv) {
         this.getChildren().remove(iv);
-        imageView = null;
     }
 
 

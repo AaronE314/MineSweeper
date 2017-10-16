@@ -12,8 +12,18 @@ import javafx.stage.Stage;
 
 import java.util.Arrays;
 
+/**
+ * abstract class used to create menus for the various popup windows throughout the game.
+ */
 public abstract class Menus {
 
+    /**
+     * Will create a new Game when called
+     * @param game
+     *      the game object
+     * @param same
+     *      whether the new game will have the same mine distribution as the current grid.
+     */
     public static void newGame(Game game, boolean same) {
         if (!same) {
             if (game.isGameInProgress()) {
@@ -26,24 +36,40 @@ public abstract class Menus {
         }
     }
 
+    /**
+     * new Game but will always create a new grid.
+     * @param game
+     *      the game object
+     */
     public static void newGame(Game game) {
         newGame(game, false);
     }
 
+    /**
+     * Opens a new window to select a difficulty before creating a new game
+     * @param game
+     *      the game object
+     */
     public static void customGame(Game game) {
+
+        //Layouts
         VBox vBox = new VBox();
-
-        VBox deffBox = new VBox();
-
+        VBox diffBox = new VBox();
         VBox customBox = new VBox();
+        HBox diffs = new HBox();
+        HBox buttons = new HBox();
+        HBox heightBox = new HBox();
+        HBox widthBox = new HBox();
+        HBox mineBox = new HBox();
 
-        HBox deffs = new HBox();
-
+        //scene and stage
         Scene scene = new Scene(vBox, 400, 200);
         Stage stage = setupWindow("Options", scene);
 
+        //radio group
         ToggleGroup group = new ToggleGroup();
 
+        //Radio buttons for the different difficulties
         RadioButton easy = new RadioButton("Easy 10 mines, 9x9");
         easy.setUserData(Constants.EASYS);
         easy.setToggleGroup(group);
@@ -58,10 +84,12 @@ public abstract class Menus {
         custom.setToggleGroup(group);
 
 
+        //Text input fields for custom difficulty
         DigitField length = new DigitField();
         DigitField width = new DigitField();
         DigitField mines = new DigitField();
 
+        //initial values and Listeners for the DigitFields
         length.setText("9");
         length.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (Integer.parseInt(length.getText()) < 9) {
@@ -92,11 +120,13 @@ public abstract class Menus {
         });
 
 
+        //Labels for the DigitFields
         Label widthLabel = new Label("Width (9-30): ");
         Label heightLabel = new Label("Height (9-24): ");
         Label minesLabel = new Label("Mines (10-667): ");
 
 
+        //Determines the default selected radio button based on the saved preferences
         if (Arrays.equals(game.getDiff(), Constants.EASY)) {
             easy.setSelected(true);
         } else if (Arrays.equals(game.getDiff(), Constants.MEDIUM)) {
@@ -107,6 +137,7 @@ public abstract class Menus {
             custom.setSelected(true);
         }
 
+        //Buttons for saving, and closing
         Button close = new Button("Cancel");
         close.setOnAction(e -> stage.close());
         Button start = new Button("Start");
@@ -133,42 +164,44 @@ public abstract class Menus {
             stage.close();
         });
 
-        HBox buttons = new HBox();
-
-        HBox heightBox = new HBox();
-        HBox widthBox = new HBox();
-        HBox mineBox = new HBox();
-
+        //adding children
         heightBox.getChildren().addAll(heightLabel, length);
         widthBox.getChildren().addAll(widthLabel, width);
         mineBox.getChildren().addAll(minesLabel, mines);
 
-
         buttons.getChildren().addAll(start, close);
         buttons.setAlignment(Pos.CENTER);
 
-        deffBox.getChildren().addAll(easy, medium, hard);
+        diffBox.getChildren().addAll(easy, medium, hard);
         customBox.getChildren().addAll(custom, heightBox, widthBox, mineBox);
-        deffs.getChildren().addAll(deffBox, customBox);
+        diffs.getChildren().addAll(diffBox, customBox);
 
-        vBox.getChildren().addAll(deffs, buttons);
+        vBox.getChildren().addAll(diffs, buttons);
 
         stage.showAndWait();
 
     }
 
+    /**
+     * the window popup for when a gameOver is achieved.
+     * @param game
+     *      the game object
+     */
     public static void gameOver(Game game) {
 
+        //layouts
         VBox vBox = new VBox();
         HBox hBox = new HBox();
 
+        //Labels
         Label label = new Label();
         label.setText("Better Luck Next Time!");
 
+        //Scene and stage
         Scene scene = new Scene(vBox, 400, 100);
-
         Stage window = setupWindow("Game Over", scene);
 
+        //Listeners for buttons
         Button newGame = new Button("New Game");
         newGame.setOnAction(e -> {
             newGame(game);
@@ -187,6 +220,7 @@ public abstract class Menus {
             Main.close();
         });
 
+        //alignment and adding Children
         vBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
 
@@ -198,17 +232,26 @@ public abstract class Menus {
 
     }
 
+    /**
+     * the window popup for when a game is won.
+     * @param game
+     *      the game object
+     */
     public static void gameWon(Game game) {
+
+        //layouts
         VBox vBox = new VBox();
         HBox hBox = new HBox();
 
+        //label
         Label label = new Label();
         label.setText("Congratulations!");
 
+        //scenes and stage
         Scene scene = new Scene(vBox, 400, 100);
-
         Stage window = setupWindow("Game Won!", scene);
 
+        //listeners
         Button newGame = new Button("New Game");
         newGame.setOnAction(e -> {
             newGame(game);
@@ -222,6 +265,7 @@ public abstract class Menus {
             Main.close();
         });
 
+        //alignment and adding children
         vBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
 
@@ -232,6 +276,9 @@ public abstract class Menus {
         window.showAndWait();
     }
 
+    /**
+     * a window popup for a help menu
+     */
     public static void help() {
         HBox hBox = new HBox();
 
@@ -248,21 +295,37 @@ public abstract class Menus {
         stage.showAndWait();
     }
 
+    /**
+     * a window popup for an options menu, will save the settings to the prefs.properties file
+     * @see Prefs
+     *
+     * @param game
+     *      the game object
+     */
     public static void options(Game game) {
+
+        //layouts
         VBox vBox = new VBox();
-
-        VBox deffBox = new VBox();
-
+        VBox diffBox = new VBox();
         VBox customBox = new VBox();
+        HBox diffs = new HBox();
+        VBox checks = new VBox();
+        HBox buttons = new HBox();
+        HBox heightBox = new HBox();
+        HBox widthBox = new HBox();
+        HBox mineBox = new HBox();
 
-        HBox deffs = new HBox();
-
+        //settings string
         String[] settings = new String[4];
+
+        //scene and stage
         Scene scene = new Scene(vBox, 400, 200);
         Stage stage = setupWindow("Options", scene);
 
+        //radio button group
         ToggleGroup group = new ToggleGroup();
 
+        //radio buttons for difficulty
         RadioButton easy = new RadioButton("Easy 10 mines, 9x9");
         easy.setUserData(Constants.EASYS);
         easy.setToggleGroup(group);
@@ -277,9 +340,12 @@ public abstract class Menus {
         custom.setToggleGroup(group);
 
 
+        //digitFields for custom difficulty
         DigitField length = new DigitField();
         DigitField width = new DigitField();
         DigitField mines = new DigitField();
+
+        //setup and listeners for the digitFields
         length.setText("9");
         length.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (Integer.parseInt(length.getText()) < 9) {
@@ -309,12 +375,12 @@ public abstract class Menus {
             mines.setEditable(custom.isSelected());
         });
 
-
+        //Labels for digitFields
         Label widthLabel = new Label("Width (9-30): ");
         Label heightLabel = new Label("Height (9-24): ");
         Label minesLabel = new Label("Mines (10-667): ");
 
-
+        //determine set RadioButton based on prefs
         if (Arrays.equals(game.getDiff(), Constants.EASY)) {
             easy.setSelected(true);
         } else if (Arrays.equals(game.getDiff(), Constants.MEDIUM)) {
@@ -325,6 +391,7 @@ public abstract class Menus {
             custom.setSelected(true);
         }
 
+        //setup for checkbox's and colour picker
         CheckBox sound = new CheckBox("Play Sound");
         sound.setSelected(game.getSound());
         CheckBox question = new CheckBox("Use Question Box");
@@ -333,14 +400,16 @@ public abstract class Menus {
         ColorPicker picker = new ColorPicker();
         picker.setValue(game.getBackColor());
 
-        VBox checks = new VBox();
-
         checks.getChildren().addAll(sound, question, picker);
 
-
+        //Buttons for saving, closing, and resetting options
         Button close = new Button("Close");
-        close.setOnAction(e -> stage.close());
         Button save = new Button("Save");
+        Button reset = new Button("Restore defaults");
+
+
+        //Listeners for buttons using prefs
+        close.setOnAction(e -> stage.close());
         save.setOnAction(e -> {
             String diff = group.getSelectedToggle().getUserData().toString();
             if (diff.equals("custom")) {
@@ -363,7 +432,6 @@ public abstract class Menus {
 
             stage.close();
         });
-        Button reset = new Button("Restore defaults");
         reset.setOnAction(e -> {
             easy.setSelected(true);
             sound.setSelected(true);
@@ -373,33 +441,39 @@ public abstract class Menus {
             Prefs.write();
         });
 
-        HBox buttons = new HBox();
-
-        HBox heightBox = new HBox();
-        HBox widthBox = new HBox();
-        HBox mineBox = new HBox();
-
+        //adding children
         heightBox.getChildren().addAll(heightLabel, length);
         widthBox.getChildren().addAll(widthLabel, width);
         mineBox.getChildren().addAll(minesLabel, mines);
 
-
         buttons.getChildren().addAll(save, close, reset);
         buttons.setAlignment(Pos.CENTER);
 
-        deffBox.getChildren().addAll(easy, medium, hard);
+        diffBox.getChildren().addAll(easy, medium, hard);
         customBox.getChildren().addAll(custom, heightBox, widthBox, mineBox);
-        deffs.getChildren().addAll(deffBox, customBox);
+        diffs.getChildren().addAll(diffBox, customBox);
 
-        vBox.getChildren().addAll(deffs, checks, buttons);
+        vBox.getChildren().addAll(diffs, checks, buttons);
 
         stage.showAndWait();
     }
 
+    /**
+     * a helper function to update the value in the custom difficulty mine DigitField
+     * @param mines
+     *      the field that is getting updated
+     * @param width
+     *      the field for the width of the grid
+     * @param length
+     *      the field for the length of the grid
+     */
     private static void updateCustom(DigitField mines, DigitField width, DigitField length) {
+        //current value
         int val = Integer.parseInt(mines.getText());
+        //maximum value
         int maxVal = (Integer.parseInt(width.getText()) - 1) * (Integer.parseInt(length.getText()) - 1);
-        System.out.println(maxVal);
+
+        //updates if the value if out of bounds
         if (val < 10) {
             mines.setText("9");
         } else if (val > maxVal) {
@@ -407,6 +481,9 @@ public abstract class Menus {
         }
     }
 
+    /**
+     * a window popup for about the creator
+     */
     public static void about() {
 
         HBox hBox = new HBox();
@@ -427,6 +504,11 @@ public abstract class Menus {
     }
 
 
+    /**
+     * a window popup to confirm a setting change and asks if the player wants to restart the game to apply the settings
+     * @param game
+     *      the game object
+     */
     public static void confirm(Game game) {
         VBox vBox = new VBox();
 
@@ -453,6 +535,11 @@ public abstract class Menus {
         window.showAndWait();
     }
 
+    /**
+     * a window popup to confirm whether the player wants to lose there current game to start a new game.
+     * @param game
+     *      the game object
+     */
     public static void newGameConfirm(Game game) {
         VBox vBox = new VBox();
 
@@ -486,6 +573,15 @@ public abstract class Menus {
         window.showAndWait();
     }
 
+    /**
+     * a helper function to do the setup for a new window.
+     * @param title
+     *      title of the window
+     * @param scene
+     *      the scene of the window
+     * @return
+     *      the created window
+     */
     private static Stage setupWindow(String title, Scene scene) {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
