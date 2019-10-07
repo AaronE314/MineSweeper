@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import static main.Constants.DEFAULTS;
-import static main.Constants.FIELDS;
-import static main.Constants.PREFS_FILE;
+import static main.Constants.*;
 
 /**
  * an abstract class that will read to and write from a .properties file.
@@ -23,28 +21,35 @@ public abstract class Prefs {
     public static void write(String[] settings) {
         Properties prop = new Properties();
         OutputStream output = null;
+        File file = null;
 
         try {
 
-            output = new FileOutputStream("src/main/assets/prefs.properties");
+//            output = new FileOutputStream(PREFS_FILE_STRING);
+
+            file = new File(System.getProperty("user.home"), PREFS_FILE_STRING);
+            file.getParentFile().mkdir();
+
 
             for (int i = 0; i < FIELDS.length; i++) {
                 prop.setProperty(FIELDS[i], settings[i]);
             }
 
-            prop.store(output, null);
+//            prop.store(output, null);
+            prop.store(new FileOutputStream(file), null);
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+//        finally {
+//            if (file != null){//output != null) {
+//                try {
+//                    output.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     /**
@@ -69,12 +74,18 @@ public abstract class Prefs {
 
         String value = null;
 
-        String file = "src/main/assets/prefs.properties";
-
         try {
-            input = new FileInputStream(file);
+            input = Constants.getResourceStream(PREFS_FILE);
 
             prop.load(input);
+
+            prop = new Properties(prop);
+            File file = new File(System.getProperty("user.home"), PREFS_FILE_STRING);
+
+            if (file.isFile()) {
+                prop.load(new FileInputStream(file));
+            }
+
 
             value = prop.getProperty(property);
 
@@ -108,9 +119,16 @@ public abstract class Prefs {
         ArrayList<String> values = new ArrayList<>();
 
         try {
-            input = new FileInputStream(PREFS_FILE);
+            input = Constants.getResourceStream(PREFS_FILE);
 
             prop.load(input);
+
+            prop = new Properties(prop);
+            File file = new File(System.getProperty("user.home"), PREFS_FILE_STRING);
+
+            if (file.isFile()) {
+                prop.load(new FileInputStream(file));
+            }
 
             Enumeration<?> e = prop.propertyNames();
             while (e.hasMoreElements()) {

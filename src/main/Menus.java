@@ -588,7 +588,7 @@ public abstract class Menus {
         window.setTitle(title);
 
         //scene.getStylesheets().clear();
-        scene.getStylesheets().add("main/assets/mainStyle.css");
+        scene.getStylesheets().add("main/resources/mainStyle.css");
 
         window.setScene(scene);
 
