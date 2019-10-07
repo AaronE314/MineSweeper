@@ -4,8 +4,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 /**
@@ -410,10 +414,13 @@ public class Game {
         if(sound) {
             new Thread(() -> {
                 try {
-                    Media sound = new Media(new File(url).toURI().toString());
-                    MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                    mediaPlayer.play();
-                } catch (MediaException e) {
+//                    Media sound = new Media(new File(url).toURI().toString());
+//                    MediaPlayer mediaPlayer = new MediaPlayer(sound);
+//                    mediaPlayer.play();
+                    InputStream in = Constants.getResourceStream(url);
+                    AudioStream as = new AudioStream(in);
+                    AudioPlayer.player.start(as);
+                } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
             }).start();

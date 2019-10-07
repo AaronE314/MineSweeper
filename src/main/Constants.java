@@ -26,10 +26,10 @@ abstract class Constants {
     /**
      * Locations for sound files
      */
-    public static final String NEW_GAME_SOUND =  getResource("/sounds/New_Game.wav");
-    public static final String CLICK_SOUND =  getResource("/sounds/Click.wav");
-    public static final String LONG_BOMB_SOUND =  getResource("/sounds/Long_Bomb.wav");
-    public static final String WIN_SOUND =  getResource("/sounds/Win.wav");
+    public static final String NEW_GAME_SOUND = "/sounds/New_Game.wav";
+    public static final String CLICK_SOUND =  "/sounds/Click.wav";
+    public static final String LONG_BOMB_SOUND = "/sounds/Long_Bomb.wav";
+    public static final String WIN_SOUND = "/sounds/Win.wav";
 
 
     /**
@@ -61,7 +61,7 @@ abstract class Constants {
 
     private static String getResource(String file) {
         System.getProperty("user.dir");
-        return Constants.class.getResource(file).getPath();
+        return Constants.class.getResource(file).toString();
     }
 
     public static InputStream getResourceStream(String file) {

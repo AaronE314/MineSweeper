@@ -241,7 +241,7 @@ public class Panel extends StackPane implements EventHandler<MouseEvent> {
                 //imageView = addImage(Constants.FLAG_IMG);
             } else if (this.isFlagged == 2) {
                 c = Color.LIGHTGREEN;
-                //imageView = addImage(Constants.QUESTION_IMG);
+//                imageView = addImage(Constants.QUESTION_IMG);
             } else {
                 if (game != null) {
                     c = game.getBackColor();
