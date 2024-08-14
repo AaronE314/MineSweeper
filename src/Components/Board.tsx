@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import Cell from "./Cell";
 import State from "../enums/State";
+import GameState from "../enums/GameState";
 
 interface CellData {
   isMine: boolean;
@@ -10,11 +11,23 @@ interface CellData {
   state: State;
 }
 
-const Board = () => {
-  const [boardX, setBoardX] = useState<number>(9);
-  const [boardY, setBoardY] = useState<number>(9);
-  const [numBombs, setNumBombs] = useState<number>(10);
+interface Props {
+  boardX: number;
+  boardY: number;
+  numBombs: number;
+  endGame: Function;
+  gameId: string;
+  gameState: GameState;
+}
 
+const Board = ({
+  boardX,
+  boardY,
+  numBombs,
+  endGame,
+  gameId,
+  gameState,
+}: Props) => {
   const [board, setBoard] = useState<CellData[][]>([]);
 
   const generateBoard = () => {
@@ -62,15 +75,58 @@ const Board = () => {
 
   useEffect(() => {
     generateBoard();
-  }, [boardX, boardY, numBombs]);
+  }, [boardX, boardY, numBombs, gameId]);
 
-  const updateState = (x: number, y: number, newState: State) => {
-    // TODO: Check for win
-    // TODO: Check for loss
+  const checkWinOrLoss = (x: number, y: number, newState: State): boolean => {
+    // Check Loss
+    if (newState === State.REVEALED && board[x][y].isMine) {
+      endGame(false);
+
+      let newBoard = [...board];
+      for (let i = 0; i < boardX; i++) {
+        for (let j = 0; j < boardY; j++) {
+          if (newBoard[i][j].isMine) {
+            newBoard[i][j].state = State.REVEALED;
+          }
+        }
+      }
+      setBoard(newBoard);
+
+      return true;
+    }
+
+    // Check win
+    for (let i = 0; i < boardX; i++) {
+      for (let j = 0; j < boardY; j++) {
+        if (board[i][j].state !== State.REVEALED && !board[i][j].isMine) {
+          return false;
+        }
+      }
+    }
+
+    endGame(true);
+
+    return true;
+  };
+
+  const updateState = (
+    x: number,
+    y: number,
+    newState: State,
+    safe: boolean = true
+  ) => {
     // TODO: Play sound
 
-    if (newState == State.REVEALED) {
-      updateRevealed(x, y);
+    if (gameState !== GameState.RUNNING) {
+      return;
+    }
+
+    if (checkWinOrLoss(x, y, newState)) {
+      return;
+    }
+
+    if (newState === State.REVEALED) {
+      updateRevealed(x, y, safe);
       return;
     }
 
@@ -82,14 +138,27 @@ const Board = () => {
     setBoard(newBoard);
   };
 
-  const updateRevealed = (x: number, y: number) => {
+  const updateRevealed = (x: number, y: number, safe: boolean = true) => {
     let newBoard = [...board];
 
     const cell = newBoard[x][y];
     cell.state = State.REVEALED;
 
-    if (cell.value === 0 && !cell.isMine) {
-      // let flagCount = 0;
+    if (!safe || (cell.value === 0 && !cell.isMine)) {
+      if (!safe) {
+        let flagCount = 0;
+        for (let n1 = -1; n1 < 2; n1++) {
+          for (let n2 = -1; n2 < 2; n2++) {
+            if (newBoard?.[x + n1]?.[y + n2]?.state === State.FLAGGED) {
+              flagCount += 1;
+            }
+          }
+        }
+
+        if (flagCount !== cell.value) {
+          return;
+        }
+      }
 
       for (let n1 = -1; n1 < 2; n1++) {
         for (let n2 = -1; n2 < 2; n2++) {
@@ -97,9 +166,6 @@ const Board = () => {
             continue;
           }
           const neighbourCell = newBoard?.[x + n1]?.[y + n2];
-          // if (cell?.state === State.FLAGGED) {
-          //   flagCount += 1;
-          // }
 
           if (!neighbourCell) {
             continue;
@@ -108,12 +174,12 @@ const Board = () => {
           if (
             neighbourCell.state === State.FLAGGED ||
             neighbourCell.state === State.REVEALED ||
-            neighbourCell.isMine
+            (neighbourCell.isMine && safe)
           ) {
             continue;
           }
 
-          updateRevealed(x + n1, y + n2);
+          updateRevealed(x + n1, y + n2, safe);
         }
       }
     }

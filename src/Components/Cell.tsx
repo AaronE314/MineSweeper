@@ -31,7 +31,6 @@ const Cell = ({
   state,
   updateState,
 }: CellProps) => {
-  // TODO: Allow for double click to reveal
   const reveal = () => {
     updateState(x, y, State.REVEALED);
   };
@@ -46,12 +45,21 @@ const Cell = ({
     updateState(x, y, state === State.FLAGGED ? State.HIDDEN : State.FLAGGED);
   };
 
+  const specialReveal = () => {
+    if (state !== State.REVEALED || value === 0) {
+      return;
+    }
+
+    updateState(x, y, State.REVEALED, false);
+  };
+
   return (
     <div
       className={`cell ${state === State.REVEALED ? "revealed" : ""}`}
       style={{ color: numberColours[value || 0] }}
       onClick={reveal}
       onContextMenu={flag}
+      onDoubleClick={specialReveal}
     >
       {/* // TODO: Clean this up */}
       {state === State.REVEALED && !isMine && value !== 0 && value}
