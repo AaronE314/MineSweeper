@@ -64,9 +64,11 @@ const Cell = ({
       {/* // TODO: Clean this up */}
       {state === State.REVEALED && !isMine && value !== 0 && value}
       {state === State.REVEALED && isMine && (
-        <img src="/resources/img/mine.png"></img>
+        <img src={process.env.PUBLIC_URL + "/resources/img/mine.png"}></img>
       )}
-      {state === State.FLAGGED && <img src="/resources/img/flag.png"></img>}
+      {state === State.FLAGGED && (
+        <img src={process.env.PUBLIC_URL + "/resources/img/flag.png"}></img>
+      )}
     </div>
   );
 };
