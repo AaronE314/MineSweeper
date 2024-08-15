@@ -75,6 +75,7 @@ const Board = ({
 
   useEffect(() => {
     generateBoard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardX, boardY, numBombs, gameId]);
 
   const checkWinOrLoss = (x: number, y: number, newState: State): boolean => {

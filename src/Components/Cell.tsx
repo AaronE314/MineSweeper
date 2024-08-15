@@ -64,10 +64,16 @@ const Cell = ({
       {/* // TODO: Clean this up */}
       {state === State.REVEALED && !isMine && value !== 0 && value}
       {state === State.REVEALED && isMine && (
-        <img src={process.env.PUBLIC_URL + "/resources/img/mine.png"}></img>
+        <img
+          alt="mine"
+          src={process.env.PUBLIC_URL + "/resources/img/mine.png"}
+        ></img>
       )}
       {state === State.FLAGGED && (
-        <img src={process.env.PUBLIC_URL + "/resources/img/flag.png"}></img>
+        <img
+          alt="flag"
+          src={process.env.PUBLIC_URL + "/resources/img/flag.png"}
+        ></img>
       )}
     </div>
   );
