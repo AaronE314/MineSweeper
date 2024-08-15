@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cell from "./Cell";
 import State from "../enums/State";
 import GameState from "../enums/GameState";
