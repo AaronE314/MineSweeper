@@ -144,6 +144,10 @@ const Board = ({
     const cell = newBoard[x][y];
     cell.state = State.REVEALED;
 
+    if (checkWinOrLoss(x, y, State.REVEALED)) {
+      return;
+    }
+
     if (!safe || (cell.value === 0 && !cell.isMine)) {
       if (!safe) {
         let flagCount = 0;
